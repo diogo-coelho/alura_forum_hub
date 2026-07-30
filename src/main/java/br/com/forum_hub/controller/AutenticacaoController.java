@@ -1,6 +1,8 @@
 package br.com.forum_hub.controller;
 
 import br.com.forum_hub.domain.autenticacao.DadosLogin;
+import br.com.forum_hub.domain.autenticacao.TokenService;
+import br.com.forum_hub.domain.usuario.Usuario;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +21,14 @@ public class AutenticacaoController {
 
     private final AuthenticationManager authenticationManager;
 
+    private final TokenService tokenService;
+
     @PostMapping("/login")
-    public ResponseEntity<Authentication> efetuarlogin(@RequestBody @Valid DadosLogin dados) {
+    public ResponseEntity<String> efetuarlogin(@RequestBody @Valid DadosLogin dados) {
         var authenticationToken = new UsernamePasswordAuthenticationToken(dados.email(), dados.senha());
         var authentication = authenticationManager.authenticate(authenticationToken);
-        return ResponseEntity.ok(authentication);
+        String token = tokenService.gerarToken((Usuario) authentication.getPrincipal());
+        return ResponseEntity.ok(token);
     }
 
 }
