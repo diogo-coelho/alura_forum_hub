@@ -1,5 +1,6 @@
 package br.com.forum_hub.domain.usuario;
 
+import br.com.forum_hub.domain.perfil.Perfil;
 import br.com.forum_hub.infra.exception.RegraDeNegocioException;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -7,7 +8,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -37,7 +40,13 @@ public class Usuario implements UserDetails {
 
     private LocalDateTime expiracaoToken;
 
-    public Usuario(DadosCadastroUsuario dados, String senhaCriptografada) {
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "usuarios-perfis",
+        joinColumns = @JoinColumn(name = "usuario_id"),
+        inverseJoinColumns = @JoinColumn(name = "perfil_id"))
+    private List<Perfil> perfis = new ArrayList<>();
+
+    public Usuario(DadosCadastroUsuario dados, String senhaCriptografada, Perfil perfil) {
         this.nomeCompleto = dados.nomeCompleto();
         this.email = dados.email();
         this.senha = senhaCriptografada;
@@ -47,13 +56,14 @@ public class Usuario implements UserDetails {
         this.verificado = false;
         this.token = UUID.randomUUID().toString();
         this.expiracaoToken = LocalDateTime.now().plusMinutes(30);
+        this.perfis.add(perfil);
     }
 
     public Usuario() {}
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return perfis;
     }
 
     @Override
