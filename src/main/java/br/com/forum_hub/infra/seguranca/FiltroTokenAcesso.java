@@ -4,11 +4,6 @@ import br.com.forum_hub.domain.autenticacao.TokenService;
 import br.com.forum_hub.domain.usuario.Usuario;
 import br.com.forum_hub.domain.usuario.UsuarioRepository;
 import br.com.forum_hub.infra.exception.RegraDeNegocioException;
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.auth0.jwt.interfaces.DecodedJWT;
-import com.auth0.jwt.interfaces.JWTVerifier;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -43,7 +38,7 @@ public class FiltroTokenAcesso extends OncePerRequestFilter {
         if (token != null && !token.isEmpty()) {
             try {
                 String email = tokenService.decodificarToken(token);
-                Usuario usuario = repository.findByEmailIgnoreCase(email)
+                Usuario usuario = repository.findByEmailIgnoreCaseAndVerificadoTrue(email)
                         .orElseThrow(() -> new RegraDeNegocioException("Usuário não encontrado"));
 
                 Authentication authentication = new UsernamePasswordAuthenticationToken(

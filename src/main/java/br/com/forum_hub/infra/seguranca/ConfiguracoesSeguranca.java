@@ -34,7 +34,11 @@ public class ConfiguracoesSeguranca {
         return httpSecurity
                 .authorizeHttpRequests(
                         req -> {
-                            req.requestMatchers("/login", "/atualizar-token").permitAll();
+                            req.requestMatchers(
+                                    "/login",
+                                    "/atualizar-token",
+                                    "registrar"
+                            ).permitAll();
                             req.anyRequest().authenticated();
                         })
                 .sessionManagement(
