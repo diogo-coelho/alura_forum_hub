@@ -42,8 +42,8 @@ public class Usuario implements UserDetails {
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "usuarios-perfis",
-        joinColumns = @JoinColumn(name = "usuario_id"),
-        inverseJoinColumns = @JoinColumn(name = "perfil_id"))
+               joinColumns = @JoinColumn(name = "usuario_id"),
+               inverseJoinColumns = @JoinColumn(name = "perfil_id"))
     private List<Perfil> perfis = new ArrayList<>();
 
     public Usuario(DadosCadastroUsuario dados, String senhaCriptografada, Perfil perfil) {
@@ -107,5 +107,9 @@ public class Usuario implements UserDetails {
         this.verificado = true;
         this.token = null;
         this.expiracaoToken = null;
+    }
+
+    public void adicionarPerfil(Perfil perfil) {
+
     }
 }

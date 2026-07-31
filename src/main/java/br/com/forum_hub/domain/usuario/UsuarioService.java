@@ -1,9 +1,11 @@
 package br.com.forum_hub.domain.usuario;
 
+import br.com.forum_hub.domain.perfil.DadosPerfil;
 import br.com.forum_hub.domain.perfil.PerfilNome;
 import br.com.forum_hub.domain.perfil.PerfilRepository;
 import br.com.forum_hub.infra.email.EmailService;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -49,4 +51,12 @@ public class UsuarioService implements UserDetailsService {
         usuario.verificar();
     }
 
+    @Transactional
+    public Usuario adicionarPerfil(Long id, DadosPerfil dados) {
+        var usuario = usuarioRepository.findById(id).orElseThrow();
+        var perfil = perfilRepository.findByNome(dados.nomePerfil());
+
+        usuario.adicionarPerfil(perfil);
+        return usuario;
+    }
 }
