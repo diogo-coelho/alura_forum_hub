@@ -1,5 +1,6 @@
 package br.com.forum_hub.domain.usuario;
 
+import br.com.forum_hub.infra.email.EmailService;
 import jakarta.transaction.Transactional;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -14,9 +15,12 @@ public class UsuarioService implements UserDetailsService {
 
     private final PasswordEncoder passwordEncoder;
 
-    public UsuarioService(UsuarioRepository repository, PasswordEncoder passwordEncoder) {
+    private final EmailService emailService;
+
+    public UsuarioService(UsuarioRepository repository, PasswordEncoder passwordEncoder, EmailService emailService) {
         this.repository = repository;
         this.passwordEncoder = passwordEncoder;
+        this.emailService = emailService;
     }
 
     @Override
@@ -31,7 +35,14 @@ public class UsuarioService implements UserDetailsService {
         var senhaCriptografada = passwordEncoder.encode(dados.senha());
         var usuario = new Usuario(dados, senhaCriptografada);
 
+        emailService.enviarEmailVerificacao(usuario);
         return repository.save(usuario);
     }
 
+    @Transactional
+    public void verificarEmail(String codigo) {
+        var usuario = repository.findByToken(codigo).orElseThrow();
+        usuario.verificar();
+    }
+    
 }

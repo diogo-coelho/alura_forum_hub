@@ -37,7 +37,8 @@ public class ConfiguracoesSeguranca {
                             req.requestMatchers(
                                     "/login",
                                     "/atualizar-token",
-                                    "registrar"
+                                    "registrar",
+                                    "/verificar-conta"
                             ).permitAll();
                             req.anyRequest().authenticated();
                         })
