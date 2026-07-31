@@ -44,11 +44,24 @@ public class TokenService {
         }
     }
 
+    public String gerarRefreshToken(Usuario usuario) {
+        try {
+            Algorithm algorithm = Algorithm.HMAC256("S3cr3T");
+            return JWT.create()
+                    .withIssuer("Fórum Hub")
+                    .withSubject(usuario.getId().toString())
+                    .withExpiresAt(expiracao(120))
+                    .sign(algorithm);
+        } catch (JWTCreationException exception){
+            throw new RegraDeNegocioException("Erro ao gerar token JWT de acesso");
+        }
+    }
+
+
     private Instant expiracao(Integer minutos) {
         return Instant.now()
                 .plusSeconds(minutos * 60L)
                 .atOffset(ZoneOffset.of("-03:00"))
                 .toInstant();
     }
-
 }

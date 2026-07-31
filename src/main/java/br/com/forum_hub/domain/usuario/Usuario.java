@@ -59,4 +59,7 @@ public class Usuario implements UserDetails {
         return miniBiografia;
     }
 
+    public Long getId() {
+        return id;
+    }
 }
